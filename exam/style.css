@@ -1,0 +1,23 @@
+@font-face {
+    font-family: "NTSomic";
+    src: url("fonts/NTSomic-Regular.otf");
+    font-style: normal;
+    font-weight: normal;
+}
+
+* {
+    font-family: NTSomic;
+    font-weight: normal;
+}
+
+.navbar, footer {
+    background-color: #9CAFC5;
+}
+
+.section1, .section3 {
+    background-color: #C8D4E2;
+}
+
+.section2, .section4 {
+    background-color: #DCE5F1;
+}
