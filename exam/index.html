@@ -13,16 +13,16 @@
 
 <body>
     <header class="sticky-top">
-        <nav class="navbar navbar-expand-lg border-bottom border-1 border-dark p-3">
+        <nav class="navbar navbar-expand-lg border-botto border-2 border-dark p-4">
             <div class="container-fluid">
-                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                <!-- <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
                     class="bi bi-bus-front-fill text-dark me-3" viewBox="0 0 16 16">
                     <path
                         d="M16 7a1 1 0 0 1-1 1v3.5c0 .818-.393 1.544-1 2v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5V14H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2a2.496 2.496 0 0 1-1-2V8a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1V2.64C1 1.452 1.845.408 3.064.268A43.608 43.608 0 0 1 8 0c2.1 0 3.792.136 4.936.268C14.155.408 15 1.452 15 2.64V4a1 1 0 0 1 1 1zM3.552 3.22A43.306 43.306 0 0 1 8 3c1.837 0 3.353.107 4.448.22a.5.5 0 0 0 .104-.994A44.304 44.304 0 0 0 8 2c-1.876 0-3.426.109-4.552.226a.5.5 0 1 0 .104.994ZM8 4c-1.876 0-3.426.109-4.552.226A.5.5 0 0 0 3 4.723v3.554a.5.5 0 0 0 .448.497C4.574 8.891 6.124 9 8 9c1.876 0 3.426-.109 4.552-.226A.5.5 0 0 0 13 8.277V4.723a.5.5 0 0 0-.448-.497A44.304 44.304 0 0 0 8 4m-3 7a1 1 0 1 0-2 0 1 1 0 0 0 2 0m8 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m-7 0a1 1 0 0 0 1 1h2a1 1 0 1 0 0-2H7a1 1 0 0 0-1 1" />
-                </svg>
+                </svg> -->
                 <a class="navbar-brand text-dark fs-2 m-0 p-0" href="#">MosGuide</a>
                 <a class="nav-link active ms-auto" aria-current="page" href="pers-acc.html">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="currentColor"
+                    <svg xmlns="http://www.w3.org/2000/svg" width="47" height="47" fill="currentColor"
                         class="bi bi-person-circle text-dark" viewBox="0 0 16 16">
                         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                         <path fill-rule="evenodd"
@@ -38,7 +38,7 @@
 
         <section class="section1" id="about">
 
-            <div class="container py-3">
+            <div class="container py-5">
                 <div class="alerts my-3">
                 </div>
 
@@ -75,9 +75,9 @@
 
 
         <section class="section2" id="advantages">
-            <div class="container py-4">
-                <div class="text-center why">
-                    <h2>Почему мы?</h2>
+            <div class="container py-5">
+                <div class="text-center">
+                    <h2 class="mb-3">Почему мы?</h2>
                 </div>
                 <div class="row d-flex justify-content-center">
                     <div class="p-3 col-lg-5 col-12">
@@ -139,9 +139,9 @@
 
 
         <section class="section3" id="expect">
-            <div class="container py-4">
+            <div class="container py-5">
                 <div class="text-center">
-                    <h2>Что вас ждет?</h2>
+                    <h2 class="mb-3">Что вас ждет?</h2>
                 </div>
                 <div class="row text-center">
                     <div class="col-lg-5 col-12 offset-lg-1">
@@ -183,9 +183,24 @@
 
 
         <section class="section4" id="routes">
-            <div class="container py-4">
+            <div class="container py-5">
                 <div class="text-center">
-                    <h2>Список пешеходных маршрутов</h2>
+                    <h2 class="mb-3">Список пешеходных маршрутов</h2>
+                </div>
+                <div class="px-5">
+                    <table class="table table-bordered border-dark table-hover">
+                        <thead class="fs-4 table-light">
+                            <tr class="text-center">
+                                <th scope="col">Название</th>
+                                <th scope="col">Описание</th>
+                                <th scope="col">Основные объекты</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider" id="routes-list">
+    
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -201,8 +216,8 @@
         </div>
     </template>
 
-    <footer class="border-top border-1 border-dark">
-        <div class="text-dark container text-center py-3">
+    <footer class="border-to border-1 border-dark">
+        <div class="text-dark container text-center py-4">
             <div>
                 MosGuide
             </div>
