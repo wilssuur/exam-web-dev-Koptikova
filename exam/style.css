@@ -10,14 +10,21 @@
     font-weight: normal;
 }
 
-.navbar, footer {
+.navbar,
+footer {
     background-color: #9BA2AA;
 }
 
-.section1, .section3 {
+.section1,
+.section3 {
     background-color: #DCE5F1;
 }
 
-.section2, .section4 {
+.section2,
+.section4 {
     background-color: white;
+}
+
+.pagination .page-link:hover {
+    cursor: pointer;
 }
