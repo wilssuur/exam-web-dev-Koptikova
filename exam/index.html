@@ -13,7 +13,7 @@
 
 <body>
     <header class="sticky-top">
-        <nav class="navbar navbar-expand-lg border-botto border-2 border-dark p-4">
+        <nav class="navbar navbar-expand-lg border-botto border-2 border-dark p-3">
             <div class="container-fluid">
                 <!-- <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
                     class="bi bi-bus-front-fill text-dark me-3" viewBox="0 0 16 16">
@@ -29,7 +29,6 @@
                             d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
                     </svg>
                 </a>
-
             </div>
         </nav>
     </header>
@@ -145,7 +144,7 @@
                 </div>
                 <div class="row text-center">
                     <div class="col-lg-5 col-12 offset-lg-1">
-                        <img src="images/sights.jpg" class="img-fluid rounded-circle" alt="" width="300px">
+                        <img src="images/sights.jpg" class="img-fluid rounded-circle" alt="" width="270px">
                     </div>
                     <div class="col-lg-5 col-12 d-flex flex-column justify-content-center">
                         <h4>Завораживающие достопримечательности</h4>
@@ -163,12 +162,12 @@
                         </p>
                     </div>
                     <div class="col-lg-5 col-12">
-                        <img src="images/parks.jpg" class="img-fluid rounded-circle" alt="" width="300px">
+                        <img src="images/parks.jpg" class="img-fluid rounded-circle" alt="" width="270px">
                     </div>
                 </div>
                 <div class="row text-center">
                     <div class="col-lg-5 col-12 offset-lg-1">
-                        <img src="images/museums.jpg" class="img-fluid rounded-circle" alt="" width="300px">
+                        <img src="images/museums.jpg" class="img-fluid rounded-circle" alt="" width="270px">
                     </div>
                     <div class="col-lg-5 col-12 d-flex flex-column justify-content-center">
                         <h4>Удивительные музеи</h4>
@@ -191,16 +190,48 @@
                     <table class="table table-bordered border-dark table-hover">
                         <thead class="fs-4 table-light">
                             <tr class="text-center">
+                                <th scope="col" hidden></th>
                                 <th scope="col">Название</th>
                                 <th scope="col">Описание</th>
                                 <th scope="col">Основные объекты</th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
-                        <tbody class="table-group-divider" id="routes-list">
-    
+                        <tbody class="table-group-divider content" id="routes-list">
+
                         </tbody>
                     </table>
+                </div>
+                <div>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item">
+                            <span class="page-link" data-page="last" id="last">Предыдущая</span>
+                        </li>
+
+                        <li class="page-item active">
+                            <span class="page-link" data-page="1">1</span>
+                        </li>
+
+                        <li class="page-item">
+                            <span class="page-link" data-page="2">2</span>
+                        </li>
+
+                        <li class="page-item">
+                            <span class="page-link" data-page="3">3</span>
+                        </li>
+
+                        <li class="page-item">
+                            <span class="page-link" data-page="4">4</span>
+                        </li>
+
+                        <li class="page-item">
+                            <span class="page-link" data-page="5">5</span>
+                        </li>
+
+                        <li class="page-item">
+                            <span class="page-link" data-page="next">Следующая</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </section>
