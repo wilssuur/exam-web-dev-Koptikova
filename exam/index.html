@@ -186,8 +186,20 @@
                 <div class="text-center">
                     <h2 class="mb-3">Список пешеходных маршрутов</h2>
                 </div>
-                <div class="px-5">
-                    <p>"..." после текста означает наличие подсказки при наведии курсора на текст</p>
+                <div class="px-5 py-3">
+                    <div class="d-flex flex-column flex-md-row mb-3">
+                        <div class="col-12 col-md-5 mb-3 mb-md-1 me-md-5 ">
+                            <input type="text" class="form-control" id="search-field" placeholder="Поиск по названию экскурсии" />
+                        </div>
+                        <div class="col-12 col-md-5 mb-1">
+                            <select class="form-select" id="main-object"
+                                aria-label="Основной объект">
+                                <option selected disabled>Основной объект</option>
+                                <option value="none">Не выбрано</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p>Троеточие(...) после текста означает наличие подсказки при наведии курсора на текст</p>
                     <table class="table table-bordered border-dark table-hover">
                         <thead class="fs-4 table-light">
                             <tr class="text-center">
