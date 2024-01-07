@@ -32,18 +32,18 @@ function createListItemElement(record) {
     itemElementObj.append(record.mainObject);
     itemElementButton.append(buttonElement);
 
-    if (itemElementDesc.innerHTML.length > 150) {
+    if (itemElementDesc.innerHTML.length > 140) {
         itemElementDesc.setAttribute('data-bs-toggle', 'tooltip');
         itemElementDesc.setAttribute('title', `${itemElementDesc.innerHTML}`);
         itemElementDesc.innerHTML =
-            itemElementDesc.innerHTML.slice(0, 150) + '...';
+            itemElementDesc.innerHTML.slice(0, 140) + '...';
     }
 
-    if (itemElementObj.innerHTML.length > 150) {
+    if (itemElementObj.innerHTML.length > 140) {
         itemElementObj.setAttribute('data-bs-toggle', 'tooltip');
         itemElementObj.setAttribute('title', `${itemElementObj.innerHTML}`);
         itemElementObj.innerHTML =
-            itemElementObj.innerHTML.slice(0, 150) + '...';
+            itemElementObj.innerHTML.slice(0, 140) + '...';
     }
 
     itemElement.append(itemElementId, itemElementName, itemElementDesc,
@@ -61,9 +61,11 @@ function renderRoutes(records) {
 function buttonStatesActive() {
     let pageButtons = document.querySelectorAll('.pagination li span');
     pageButtons = Array.from(pageButtons).splice(1, 5);
+
     pageButtons.forEach((button, index) => {
         if (button.innerHTML == currentPage) {
             button.classList.add('active');
+
         } else {
             button.classList.remove('active');
         }
@@ -73,12 +75,23 @@ function buttonStatesActive() {
 function buttonStatesDisabled(page) {
     let buttonLast = document.getElementById('last');
     let buttonNext = document.getElementById('next');
+    let countItems = newRoutes.length;
 
-    if (page == 1) {
+    if (page == 1 && (page == Math.ceil(countItems / 5))) {
         buttonLast.classList.add('disabled');
+        buttonNext.classList.add('disabled');
+
+    } else if (page == 1) {
+        buttonLast.classList.add('disabled');
+        buttonNext.classList.remove('disabled');
 
     } else if (page == 24) {
         buttonNext.classList.add('disabled');
+
+    } else if (page == Math.ceil(countItems / 5)) {
+        buttonLast.classList.remove('disabled');
+        buttonNext.classList.add('disabled');
+        console.log('page = math');
 
     } else {
         buttonLast.classList.remove('disabled');
@@ -89,16 +102,25 @@ function buttonStatesDisabled(page) {
 function lastGroupButtons() {
     let pageButtons = document.querySelectorAll('.pagination li span');
     pageButtons = Array.from(pageButtons).splice(1, 5);
+
     pageButtons.forEach((button, index) => {
+        button.classList.remove('d-none');
         button.innerHTML = Number(button.innerHTML) - 5;
     });
 }
 
 function nextGroupButtons() {
+    let items;
     let pageButtons = document.querySelectorAll('.pagination li span');
     pageButtons = Array.from(pageButtons).splice(1, 5);
 
-    let items = Array.from(content.getElementsByTagName('tr'));
+    if (document.querySelector('#search-field').value == '') {
+        items = Array.from(content.getElementsByTagName('tr'));
+        
+    } else {
+        items = newRoutes;
+    }
+
     let startIndex = currentPage * itemsPerPage;
     let countItems = items.slice(startIndex).length;
 
@@ -111,43 +133,46 @@ function nextGroupButtons() {
 }
 
 function pageBtnHandler(event) {
-    if (document.querySelector('#search-field').value == '') {
-        let items = Array.from(content.getElementsByTagName('tr'));
-        console.log(items);
-        let page = event.target.innerHTML;
 
-        if (page == 'Следующая') {
-            if (currentPage % 5 == 0) {
-                nextGroupButtons();
-            }
-            currentPage = currentPage + 1;
+    let items = Array.from(content.getElementsByTagName('tr'));
+    let page = event.target.innerHTML;
 
-        } else if (page == 'Предыдущая') {
-            if ((currentPage - 1) % 5 == 0) {
-                lastGroupButtons();
-
-            }
-            currentPage = currentPage - 1;
-
-        } else if (Number(page)) {
-            currentPage = Number(page);
+    if (page == '›') {
+        if (currentPage % 5 == 0) {
+            nextGroupButtons();
         }
+        currentPage = currentPage + 1;
 
-        let startIndex = (currentPage - 1) * itemsPerPage;
-        let endIndex = startIndex + itemsPerPage;
+    } else if (page == '‹') {
+        if ((currentPage - 1) % 5 == 0) {
+            lastGroupButtons();
+        }
+        currentPage = currentPage - 1;
 
+    } else if (Number(page)) {
+        currentPage = Number(page);
+    }
+
+    let startIndex = (currentPage - 1) * itemsPerPage;
+    let endIndex = startIndex + itemsPerPage;
+
+    if (document.querySelector('#search-field').value == '') {
         items.forEach((item, index) => {
             item.classList.toggle('d-none', index < startIndex
                 || index >= endIndex);
         });
 
-        buttonStatesDisabled(currentPage);
-        buttonStatesActive();
-        
     } else {
-        console.log(newRoutes);
+        newRoutes.forEach((item, index) => {
+            item.classList.toggle('d-none', index < startIndex
+                || index >= endIndex);
+        });
     }
-}   
+
+    buttonStatesDisabled(currentPage);
+    buttonStatesActive();
+
+}
 
 function showItems(items) {
     newRoutes = [];
@@ -175,28 +200,38 @@ function showItems(items) {
             button.classList.remove('d-none');
         }
     });
+    buttonStatesDisabled(currentPage);
+    buttonStatesActive();
 }
 
 function searchHandler() {
+    let pageButtons = document.querySelectorAll('.pagination li span');
+    pageButtons = Array.from(pageButtons).splice(1, 5);
+
+    pageButtons.forEach((button, index) => {
+        button.innerHTML = index + 1;
+    });
+    currentPage = 1;
     let searchText = document.querySelector('#search-field').value;
     let items = Array.from(content.getElementsByTagName('tr'));
 
     if (searchText == '') {
-        console.log(items);
         let pageButtons = document.querySelectorAll('.pagination li span');
         pageButtons = Array.from(pageButtons).splice(1, 5);
+
         pageButtons.forEach((button) => {
             button.classList.remove('d-none');
         });
 
-        let startIndex = 0;
+        let startIndex = (currentPage - 1) * itemsPerPage;
         let endIndex = startIndex + itemsPerPage;
+
         items.forEach((item, index) => {
             item.classList.toggle('d-none', index < startIndex
                 || index >= endIndex);
         });
-        let buttonLast = document.getElementById('last');
-        buttonLast.classList.add('disabled');
+        buttonStatesDisabled(currentPage);
+        buttonStatesActive();
 
     } else {
         items.forEach((item) => {
@@ -223,6 +258,7 @@ async function LoadStorage() {
     let items = Array.from(content.getElementsByTagName('tr'));
     let startIndex = (currentPage - 1) * itemsPerPage;
     let endIndex = startIndex + itemsPerPage;
+
     items.forEach((item, index) => {
         item.classList.toggle('d-none', index < startIndex
             || index >= endIndex);
