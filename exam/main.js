@@ -13,8 +13,8 @@ function createListItemElement(record) {
     let buttonElement = document.createElement('button');
     let textButton = "Выбрать";
     buttonElement.append(textButton);
-    buttonElement.classList.add('px-3', 'py-2', 'border',
-        'border-1', 'rounded-2');
+    buttonElement.classList.add('route-button', 'px-3', 'py-2', 'border',
+        'border-1', 'rounded-2', 'border-dark');
 
     let itemElementId = document.createElement('td');
     itemElementId.classList.add("d-none", "route-id");
@@ -56,6 +56,7 @@ function renderRoutes(records) {
     for (let i = 0; i < records.length; i++) {
         routesList.append(createListItemElement(records[i]));
     }
+   
 }
 
 function buttonStatesActive() {
@@ -168,14 +169,13 @@ function pageBtnHandler(event) {
                 || index >= endIndex);
         });
     }
-
     buttonStatesDisabled(currentPage);
     buttonStatesActive();
-
 }
 
 function showItems(items) {
     newRoutes = [];
+
     items.forEach((item) => {
         if (item.className != 'd-none') {
             newRoutes.push(item);
@@ -184,6 +184,7 @@ function showItems(items) {
 
     let startIndex = 0;
     let endIndex = startIndex + itemsPerPage;
+
     newRoutes.forEach((item, index) => {
         item.classList.toggle('d-none', index < startIndex
             || index >= endIndex);
@@ -193,11 +194,14 @@ function showItems(items) {
     pageButtons = Array.from(pageButtons).splice(1, 5);
 
     let countItems = newRoutes.length;
+
     pageButtons.forEach((button, index) => {
         if ((index + 1) > Math.ceil(countItems / 5)) {
             button.classList.add('d-none');
+
         } else {
             button.classList.remove('d-none');
+            
         }
     });
     buttonStatesDisabled(currentPage);
@@ -247,6 +251,72 @@ function searchHandler() {
     }
 }
 
+function createGuidesListElement(record) {
+    let itemElement = document.createElement('tr');
+
+    let buttonElement = document.createElement('button');
+    let textButton = "Выбрать";
+    buttonElement.append(textButton);
+    buttonElement.classList.add('guide-button', 'px-2', 'py-1', 'border',
+        'border-1', 'rounded-1', 'border-dark');
+
+    let photoElement = document.createElement('img');
+    photoElement.setAttribute('src', 'images/avatar.png');
+
+    let itemElementId = document.createElement('td');
+    itemElementId.classList.add("d-none", "route-id");
+
+    let itemElementPhoto = document.createElement('td');
+    let itemElementName = document.createElement('td');
+    let itemElementLanguage = document.createElement('td');
+    let itemElementWorkExperience = document.createElement('td');
+    let itemElementPricePerHour = document.createElement('td');
+    let itemElementButton = document.createElement('td');
+
+    itemElementId.append(record.id);
+    itemElementPhoto.append(photoElement);
+    itemElementName.append(record.name);
+    itemElementLanguage.append(record.language);
+    itemElementWorkExperience.append(record.workExperience);
+    itemElementPricePerHour.append(record.pricePerHour);
+    itemElementButton.append(buttonElement);
+
+    itemElement.append(itemElementId, itemElementPhoto, itemElementName, 
+        itemElementLanguage, itemElementWorkExperience, 
+        itemElementPricePerHour, itemElementButton);
+    return itemElement;
+}
+
+function renderGuides(records) {
+    console.log(records);
+    let guidesList = document.querySelector('#guides-list');
+    for (let i = 0; i < records.length; i++) {
+        guidesList.append(createGuidesListElement(records[i]));
+    }
+}
+
+async function routeBtnHandler(event) {
+    if (event.target.className.includes('route-button')) {
+        let elem = event.target;
+        let idRoute = elem.closest("tr").querySelector('.route-id').innerHTML;
+        let nameR = elem.closest("tr").querySelector('.route-name').innerHTML;
+
+        let urlGuides = `${hostRoutes}/${idRoute}/guides?${apiKey}`;
+        let url = new URL(urlGuides);
+    
+        let response = await fetch(url);
+        let result = await response.json();
+
+        console.log(document.querySelector('#guides'));
+        let section5 = document.querySelector('#guides');
+        section5.classList.remove('d-none');
+
+        document.querySelector('.route-guides').innerHTML = nameR;
+
+        renderGuides(result);
+    }
+}
+
 async function LoadStorage() {
     let urlRoutes = `${hostRoutes}?${apiKey}`;
     let url = new URL(urlRoutes);
@@ -265,6 +335,9 @@ async function LoadStorage() {
     });
     let buttonLast = document.getElementById('last');
     buttonLast.classList.add('disabled');
+    document.querySelector('#routes-list').onclick = routeBtnHandler;
+
+
 }
 
 window.onload = function () {
