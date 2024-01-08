@@ -2,7 +2,6 @@ let apiKey = 'api_key=b3cd4c4c-4324-454e-a437-942d700bd5ad';
 let hostRoutes = 'http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes';
 
 let tableRoutesContent = document.querySelector('#routes-list');
-// let contentGuides = document.querySelector('#guides-list');
 let newRoutes = [];
 const itemsPerPage = 5;
 let currentPage = 1;
@@ -60,7 +59,6 @@ function renderRoutes(records) {
     for (let i = 0; i < records.length; i++) {
         routesList.append(createRoutesListElement(records[i]));
     }
-
 }
 
 function buttonStatesActive() {
@@ -82,25 +80,39 @@ function buttonStatesDisabled() {
     let buttonNext = document.querySelector('.next');
     let countItems = newRoutes.length;
 
-    if (currentPage == 1 && (currentPage == Math.ceil(countItems / 5))) {
+    let filterText = document.getElementById("main-object").value;
+    let searchText = document.querySelector('#search-field').value;
+
+    let isNone = filterText === 'none';
+    let isNotChose = filterText == 'Основной объект';
+
+    let isEmptyFields = searchText == '' && (isNone || isNotChose);
+
+    if (currentPage == 1 && !isEmptyFields &&
+        (currentPage == Math.ceil(countItems / 5))) {
+            
+        console.log('if 1');
         buttonLast.classList.add('disabled');
         buttonNext.classList.add('disabled');
 
     } else if (currentPage == 1) {
         buttonLast.classList.add('disabled');
         buttonNext.classList.remove('disabled');
+        console.log('if 2');
 
     } else if (currentPage == 24) {
         buttonNext.classList.add('disabled');
+        console.log('if 3');
 
     } else if (currentPage == Math.ceil(countItems / 5)) {
         buttonLast.classList.remove('disabled');
         buttonNext.classList.add('disabled');
-        console.log('page = math');
+        console.log('if 4');
 
     } else {
         buttonLast.classList.remove('disabled');
         buttonNext.classList.remove('disabled');
+        console.log('if 5');
     }
 }
 
@@ -108,7 +120,7 @@ function lastGroupButtons() {
     let pageButtons = document.querySelectorAll('.pagination-routes li span');
     pageButtons = Array.from(pageButtons).splice(1, 5);
 
-    pageButtons.forEach((button, index) => {
+    pageButtons.forEach((button) => {
         button.classList.remove('d-none');
         button.innerHTML = Number(button.innerHTML) - 5;
     });
@@ -160,7 +172,13 @@ function pageBtnHandler(event) {
     let startIndex = (currentPage - 1) * itemsPerPage;
     let endIndex = startIndex + itemsPerPage;
 
-    if (document.querySelector('#search-field').value == '') {
+    let filterText = document.getElementById("main-object").value;
+    let searchText = document.querySelector('#search-field').value;
+
+    let isNone = filterText === 'none';
+    let isNotChose = filterText == 'Основной объект';
+
+    if (searchText == '' && (isNone || isNotChose)) {
         items.forEach((item, index) => {
             item.classList.toggle('d-none', index < startIndex
                 || index >= endIndex);
@@ -174,95 +192,6 @@ function pageBtnHandler(event) {
     }
     buttonStatesDisabled();
     buttonStatesActive();
-}
-
-function showSearchRoutes(items) {
-    newRoutes = [];
-
-    items.forEach((item) => {
-        if (item.className != 'd-none') {
-            newRoutes.push(item);
-        }
-    });
-
-    let startIndex = 0;
-    let endIndex = startIndex + itemsPerPage;
-
-    newRoutes.forEach((item, index) => {
-        item.classList.toggle('d-none', index < startIndex
-            || index >= endIndex);
-    });
-
-    let pageButtons = document.querySelectorAll('.pagination-routes li span');
-    pageButtons = Array.from(pageButtons).splice(1, 5);
-
-    let countItems = newRoutes.length;
-
-    pageButtons.forEach((button, index) => {
-        if ((index + 1) > Math.ceil(countItems / 5)) {
-            button.classList.add('d-none');
-
-        } else {
-            button.classList.remove('d-none');
-
-        }
-    });
-    buttonStatesDisabled();
-    buttonStatesActive();
-}
-
-function searchRoutesHandler() {
-    let pageButtons = document.querySelectorAll('.pagination-routes li span');
-    pageButtons = Array.from(pageButtons).splice(1, 5);
-
-    pageButtons.forEach((button, index) => {
-        button.innerHTML = index + 1;
-    });
-    currentPage = 1;
-    let searchText = document.querySelector('#search-field').value;
-    let items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
-
-    if (searchText == '') {
-        let selector = '.pagination-routes li span';
-        let pageButtons = document.querySelectorAll(selector);
-        pageButtons = Array.from(pageButtons).splice(1, 5);
-
-        pageButtons.forEach((button) => {
-            button.classList.remove('d-none');
-        });
-
-        let startIndex = (currentPage - 1) * itemsPerPage;
-        let endIndex = startIndex + itemsPerPage;
-
-        items.forEach((item, index) => {
-            if (item.querySelector('.route-id').innerHTML == currentRoute) {
-                item.classList = 'table-secondary border-dark';
-            } else {
-                item.classList.toggle('d-none', index < startIndex
-                    || index >= endIndex);
-            }
-        });
-        buttonStatesDisabled();
-        buttonStatesActive();
-
-    } else {
-        items.forEach((item) => {
-            let routeName = item.querySelector('.route-name').innerHTML;
-            let itemName = routeName.toLowerCase();
-
-            if (!(itemName.includes(searchText.toLowerCase()))) {
-                item.classList = "d-none";
-            } else {
-                if (item.querySelector('.route-id').innerHTML == currentRoute) {
-                    item.classList = 'table-secondary border-dark';
-                    console.log(item);
-                } else {
-                    item.classList.remove('d-none');
-                }
-            }
-        });
-        showSearchRoutes(items);
-    }
 }
 
 function createGuidesListElement(record) {
@@ -311,38 +240,7 @@ function renderGuides(records) {
     }
 }
 
-async function routeChooseBtnHandler(event) {
-    if (event.target.className.includes('route-button')) {
-        let elem = event.target;
-        let idRoute = elem.closest("tr").querySelector('.route-id').innerHTML;
-        currentRoute = idRoute;
-        let nameR = elem.closest("tr").querySelector('.route-name').innerHTML;
-
-        let items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
-
-        items.forEach((item) => {
-            item.classList.remove('table-secondary', 'border-dark');
-        });
-
-        elem.closest("tr").classList.add('table-secondary', 'border-dark');
-
-        let urlGuides = `${hostRoutes}/${idRoute}/guides?${apiKey}`;
-        let url = new URL(urlGuides);
-
-        let response = await fetch(url);
-        let result = await response.json();
-
-        let section5 = document.querySelector('#guides');
-        section5.classList.remove('d-none');
-
-        document.querySelector('.route-guides').innerHTML = nameR;
-
-        renderGuides(result);
-    }
-}
-
-function showFilterRoutes(items) {
-    console.log(items);
+function showSearchRoutes(items) {
     newRoutes = [];
 
     items.forEach((item) => {
@@ -377,19 +275,26 @@ function showFilterRoutes(items) {
     buttonStatesActive();
 }
 
-
-function filterRoutesHander(event) {
-    let filterText = event.target.value;
+function searchRoutesHandler() {
     let pageButtons = document.querySelectorAll('.pagination-routes li span');
     pageButtons = Array.from(pageButtons).splice(1, 5);
 
     pageButtons.forEach((button, index) => {
         button.innerHTML = index + 1;
     });
-    currentPage = 1;
-    let items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
 
-    if (filterText == 'asdf') {
+    currentPage = 1;
+    let items;
+    items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
+
+    let searchText = document.querySelector('#search-field').value;
+    let filterText = document.getElementById("main-object").value;
+
+    let isNone = filterText === 'none';
+    let isNotChose = filterText == 'Основной объект';
+
+    if (searchText == '' && (isNone || isNotChose)) {
+        console.log('ничего');
         let selector = '.pagination-routes li span';
         let pageButtons = document.querySelectorAll(selector);
         pageButtons = Array.from(pageButtons).splice(1, 5);
@@ -412,27 +317,90 @@ function filterRoutesHander(event) {
         buttonStatesDisabled();
         buttonStatesActive();
 
-    } else {
+    } else if (isNone || isNotChose) {
+        console.log('только поиск');
         items.forEach((item) => {
-            let routeObj = item.querySelector('.route-objects').innerHTML;
+            let routeName = item.querySelector('.route-name').innerHTML;
+            let itemName = routeName.toLowerCase();
+
+            if (!(itemName.includes(searchText.toLowerCase()))) {
+                item.classList = "d-none";
+            } else {
+                if (item.querySelector('.route-id').innerHTML == currentRoute) {
+                    item.classList = 'table-secondary border-dark';
+                } else {
+                    item.classList.remove('d-none');
+                }
+            }
+        });
+        showSearchRoutes(items);
+
+    } else if (searchText != '' && !(isNone || isNotChose)) {
+        console.log('и поиск, и фильтр');
+
+        items.forEach((item) => {
+            let routeName = item.querySelector('.route-name').innerHTML;
+            let itemName = routeName.toLowerCase();
+
+            let routeObj;
+            let itemRouteObj = item.querySelector('.route-objects');
+            let isAttribute = itemRouteObj.getAttribute('title');
+
+            if (isAttribute) {
+                routeObj = itemRouteObj.getAttribute('title');
+
+            } else {
+                routeObj = itemRouteObj.innerHTML;
+            }
+
             let itemObj = routeObj.toLowerCase();
 
-            console.log(itemObj, filterText);
+            let itemNameIncludes = itemName.includes(searchText.toLowerCase());
+            let itemObjIncludes = itemObj.includes(filterText.toLowerCase());
+
+            if (!(itemNameIncludes && itemObjIncludes)) {
+                console.log(item, 'не подходит');
+                item.classList = "d-none";
+            } else {
+                console.log(item, 'подходит');
+                if (item.querySelector('.route-id').innerHTML == currentRoute) {
+                    item.classList = 'table-secondary border-dark';
+                } else {
+                    item.classList.remove('d-none');
+                }
+            }
+        });
+        showSearchRoutes(items);
+
+    } else {
+        console.log('только фильтр');
+
+        items.forEach((item) => {
+            let routeObj;
+            let itemRouteObj = item.querySelector('.route-objects');
+            let isAttribute = itemRouteObj.getAttribute('title');
+
+            if (isAttribute) {
+                routeObj = itemRouteObj.getAttribute('title');
+
+            } else {
+                routeObj = itemRouteObj.innerHTML;
+            }
+
+            let itemObj = routeObj.toLowerCase();
 
             if (!(itemObj.includes(filterText.toLowerCase()))) {
                 item.classList = "d-none";
             } else {
                 if (item.querySelector('.route-id').innerHTML == currentRoute) {
                     item.classList = 'table-secondary border-dark';
-                    console.log(item);
                 } else {
                     item.classList.remove('d-none');
                 }
             }
         });
-        showFilterRoutes(items);
+        showSearchRoutes(items);
     }
-
 }
 
 function parser(objects) {
@@ -452,7 +420,6 @@ function parser(objects) {
         array = objects.split(', ');
     }
     array.forEach((item) => {
-
         if (item.length > 70) {
             item = item.slice(0, 70);
         };
@@ -463,6 +430,36 @@ function parser(objects) {
         }
 
     });
+}
+
+async function routeChooseBtnHandler(event) {
+    if (event.target.className.includes('route-button')) {
+        let elem = event.target;
+        let idRoute = elem.closest("tr").querySelector('.route-id').innerHTML;
+        currentRoute = idRoute;
+        let nameR = elem.closest("tr").querySelector('.route-name').innerHTML;
+
+        let items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
+
+        items.forEach((item) => {
+            item.classList.remove('table-secondary', 'border-dark');
+        });
+
+        elem.closest("tr").classList.add('table-secondary', 'border-dark');
+
+        let urlGuides = `${hostRoutes}/${idRoute}/guides?${apiKey}`;
+        let url = new URL(urlGuides);
+
+        let response = await fetch(url);
+        let result = await response.json();
+
+        let section5 = document.querySelector('#guides');
+        section5.classList.remove('d-none');
+
+        document.querySelector('.route-guides').innerHTML = nameR;
+
+        renderGuides(result);
+    }
 }
 
 async function LoadStorage() {
@@ -493,5 +490,5 @@ window.onload = function () {
     LoadStorage();
     document.querySelector('.pagination-routes').onclick = pageBtnHandler;
     document.querySelector('#search-field').oninput = searchRoutesHandler;
-    document.querySelector('#main-object').onchange = filterRoutesHander;
+    document.querySelector('#main-object').onchange = searchRoutesHandler;
 };
