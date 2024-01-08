@@ -2,10 +2,12 @@ let apiKey = 'api_key=b3cd4c4c-4324-454e-a437-942d700bd5ad';
 let hostRoutes = 'http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes';
 
 let tableRoutesContent = document.querySelector('#routes-list');
+let tableGuidesContent = document.querySelector('#guides-list');
 let newRoutes = [];
 const itemsPerPage = 5;
 let currentPage = 1;
 let currentRoute;
+let currentGuide;
 
 function createRoutesListElement(record) {
     let itemElement = document.createElement('tr');
@@ -90,29 +92,24 @@ function buttonStatesDisabled() {
 
     if (currentPage == 1 && !isEmptyFields &&
         (currentPage == Math.ceil(countItems / 5))) {
-            
-        console.log('if 1');
+
         buttonLast.classList.add('disabled');
         buttonNext.classList.add('disabled');
 
     } else if (currentPage == 1) {
         buttonLast.classList.add('disabled');
         buttonNext.classList.remove('disabled');
-        console.log('if 2');
 
     } else if (currentPage == 24) {
         buttonNext.classList.add('disabled');
-        console.log('if 3');
 
     } else if (currentPage == Math.ceil(countItems / 5)) {
         buttonLast.classList.remove('disabled');
         buttonNext.classList.add('disabled');
-        console.log('if 4');
 
     } else {
         buttonLast.classList.remove('disabled');
         buttonNext.classList.remove('disabled');
-        console.log('if 5');
     }
 }
 
@@ -209,12 +206,19 @@ function createGuidesListElement(record) {
     photoElement.setAttribute('width', '35px');
 
     let itemElementId = document.createElement('td');
-    itemElementId.classList.add("d-none", "route-id");
+    itemElementId.classList.add("d-none", "guide-id");
 
     let itemElementPhoto = document.createElement('td');
+
     let itemElementName = document.createElement('td');
+    itemElementName.classList.add('guide-name');
+
     let itemElementLanguage = document.createElement('td');
+    itemElementLanguage.classList.add('guide-language');
+
     let itemElementWorkExperience = document.createElement('td');
+    itemElementWorkExperience.classList.add('guide-experience');
+
     let itemElementPricePerHour = document.createElement('td');
     let itemElementButton = document.createElement('td');
 
@@ -222,6 +226,7 @@ function createGuidesListElement(record) {
     itemElementPhoto.append(photoElement);
     itemElementName.append(record.name);
     itemElementLanguage.append(record.language);
+
     itemElementWorkExperience.append(record.workExperience);
     itemElementPricePerHour.append(record.pricePerHour);
     itemElementButton.append(buttonElement);
@@ -284,8 +289,7 @@ function searchRoutesHandler() {
     });
 
     currentPage = 1;
-    let items;
-    items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
+    let items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
 
     let searchText = document.querySelector('#search-field').value;
     let filterText = document.getElementById("main-object").value;
@@ -359,10 +363,9 @@ function searchRoutesHandler() {
             let itemObjIncludes = itemObj.includes(filterText.toLowerCase());
 
             if (!(itemNameIncludes && itemObjIncludes)) {
-                console.log(item, 'не подходит');
                 item.classList = "d-none";
+
             } else {
-                console.log(item, 'подходит');
                 if (item.querySelector('.route-id').innerHTML == currentRoute) {
                     item.classList = 'table-secondary border-dark';
                 } else {
@@ -432,6 +435,47 @@ function parser(objects) {
     });
 }
 
+function createFilterLanguages(object) {
+    let languagesFilter = document.getElementById("guide-languages");
+    let languagesFilterArray = Array.from(languagesFilter);
+    let isNew = true;
+
+    languagesFilterArray.forEach((language) => {
+        if (object == language.innerHTML) {
+            isNew = false;
+        }
+    });
+
+    if (isNew) {
+        let newOption = new Option(`${object}`, `${object}`);
+        languagesFilter.append(newOption);
+    }
+
+}
+
+function guideChooseBtnHandler(event) {
+    if (event.target.className.includes('guide-button')) {
+        let elem = event.target;
+
+        let idGuide = elem.closest("tr").querySelector('.guide-id').innerHTML;
+        currentGuide = idGuide;
+
+        let nameG = elem.closest("tr").querySelector('.guide-name').innerHTML;
+        let array = Array.from(tableRoutesContent.getElementsByTagName('tr'));
+
+        let nameRoute;
+
+        array.forEach((elem) => {
+            let elemId = elem.querySelector('.route-id').innerHTML;
+            if (elemId == currentRoute) {
+                nameRoute = elem.querySelector('.route-name').innerHTML;
+            }
+        });
+        console.log(nameG, nameRoute);
+
+    }
+}
+
 async function routeChooseBtnHandler(event) {
     if (event.target.className.includes('route-button')) {
         let elem = event.target;
@@ -459,7 +503,117 @@ async function routeChooseBtnHandler(event) {
         document.querySelector('.route-guides').innerHTML = nameR;
 
         renderGuides(result);
+
+        let languagesFilter = document.getElementById("guide-languages");
+        let languagesFilterArray = Array.from(languagesFilter);
+
+        languagesFilterArray.forEach((lang) => {
+            if (lang.value != 'none' && lang.value != 'Язык экскурсии') {
+                lang.remove();
+            }
+        });
+
+        result.forEach((object) => {
+            createFilterLanguages(object.language);
+        });
+
+        document.querySelector('#guides-list').onclick = guideChooseBtnHandler;
     }
+}
+
+
+function filterGuidesHandler() {
+    let filterText = document.getElementById("guide-languages").value;
+
+    let isNone = filterText === 'none';
+    let isNotChose = filterText == 'Язык экскурсии';
+
+    let guideExp = document.getElementById('guides-experience');
+    let guidesExpFrom = guideExp.querySelector('input[name="experience-from"]');
+    let guidesExpTo = guideExp.querySelector('input[name="experience-to"]');
+
+    guidesExpFrom = Number(guidesExpFrom.value);
+    guidesExpTo = Number(guidesExpTo.value);
+
+    let isEmptyExp = ((guidesExpFrom == 0) && (guidesExpTo == 0));
+
+    let items = Array.from(tableGuidesContent.getElementsByTagName('tr'));
+
+    if ((isNone || isNotChose) && isEmptyExp) {
+        console.log('ничего');
+        items.forEach((item) => {
+            item.classList.remove('d-none');
+        });
+
+    } else if (isEmptyExp) {
+        console.log('только фильтр');
+        items.forEach((item) => {
+            let itemGuideLang = item.querySelector('.guide-language');
+            itemGuideLang = itemGuideLang.innerHTML;
+
+            if (!(itemGuideLang.includes(filterText))) {
+                item.classList.add("d-none");
+            } else {
+                item.classList.remove('d-none');
+            }
+        });
+
+    } else {
+        console.log('и опыт, и фильтр(если есть)');
+        items.forEach((item) => {
+            let itemGuideLang = item.querySelector('.guide-language');
+            itemGuideLang = itemGuideLang.innerHTML;
+
+            let itemGuideExp = item.querySelector('.guide-experience');
+            itemGuideExp = Number(itemGuideExp.innerHTML);
+
+            let isLanguage;
+            if (isNone || isNotChose) {
+                isLanguage = true;
+            } else {
+                isLanguage = itemGuideLang.includes(filterText);
+            }
+
+            if (!isLanguage) {
+                item.classList.add("d-none");
+
+            } else {
+                item.classList.remove('d-none');
+            }
+
+            if (guidesExpTo && guidesExpFrom && isLanguage) {
+                let isFrom = (itemGuideExp >= guidesExpFrom);
+                let isTo = (itemGuideExp <= guidesExpTo);
+
+                if (!(isFrom && isTo)) {
+                    item.classList.add("d-none");
+
+                } else {
+                    item.classList.remove('d-none');
+                }
+
+            } else if (guidesExpFrom && isLanguage) {
+
+                if (!((itemGuideExp >= guidesExpFrom))) {
+                    item.classList.add("d-none");
+
+                } else {
+                    item.classList.remove('d-none');
+                }
+
+            } else if (guidesExpTo && isLanguage) {
+
+                if (!((itemGuideExp <= guidesExpTo))) {
+                    item.classList.add("d-none");
+
+                } else {
+                    item.classList.remove('d-none');
+                }
+
+            }
+        });
+    }
+
 }
 
 async function LoadStorage() {
@@ -491,4 +645,10 @@ window.onload = function () {
     document.querySelector('.pagination-routes').onclick = pageBtnHandler;
     document.querySelector('#search-field').oninput = searchRoutesHandler;
     document.querySelector('#main-object').onchange = searchRoutesHandler;
+    document.querySelector('#guide-languages').onchange = filterGuidesHandler;
+    let guidesExp = document.getElementById('guides-experience');
+    guidesExp.querySelector('input[name="experience-from"]').oninput =
+        filterGuidesHandler;
+    guidesExp.querySelector('input[name="experience-to"]').oninput =
+        filterGuidesHandler;
 };
