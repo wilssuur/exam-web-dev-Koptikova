@@ -453,26 +453,40 @@ function createFilterLanguages(object) {
 
 }
 
+function orderBtnHandler(nameG, nameR) {
+    console.log(nameG, nameR);
+}
+
 function guideChooseBtnHandler(event) {
     if (event.target.className.includes('guide-button')) {
         let elem = event.target;
+
+        document.querySelector('#order-button').classList.remove('d-none');
+
+        let itemsG = Array.from(tableGuidesContent.getElementsByTagName('tr'));
+        let itemsR = Array.from(tableRoutesContent.getElementsByTagName('tr'));
+
+        itemsG.forEach((item) => {
+            item.classList.remove('table-secondary', 'border-dark');
+        });
+
+        elem.closest("tr").classList.add('table-secondary', 'border-dark');
 
         let idGuide = elem.closest("tr").querySelector('.guide-id').innerHTML;
         currentGuide = idGuide;
 
         let nameG = elem.closest("tr").querySelector('.guide-name').innerHTML;
-        let array = Array.from(tableRoutesContent.getElementsByTagName('tr'));
 
-        let nameRoute;
+        let nameR;
 
-        array.forEach((elem) => {
-            let elemId = elem.querySelector('.route-id').innerHTML;
+        itemsR.forEach((item) => {
+            let elemId = item.querySelector('.route-id').innerHTML;
             if (elemId == currentRoute) {
-                nameRoute = elem.querySelector('.route-name').innerHTML;
+                nameR = item.querySelector('.route-name').innerHTML;
             }
         });
-        console.log(nameG, nameRoute);
-
+        let orderButton = document.querySelector('#order-button');
+        orderButton.onclick = orderBtnHandler(nameG, nameR);
     }
 }
 
