@@ -80,6 +80,9 @@ function buttonStatesActive() {
 function buttonStatesDisabled() {
     let buttonLast = document.querySelector('.last');
     let buttonNext = document.querySelector('.next');
+
+    items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
+
     let countItems = newRoutes.length;
 
     let filterText = document.getElementById("main-object").value;
@@ -91,8 +94,7 @@ function buttonStatesDisabled() {
     let isEmptyFields = searchText == '' && (isNone || isNotChose);
 
     if (currentPage == 1 && !isEmptyFields &&
-        (currentPage == Math.ceil(countItems / 5))) {
-
+        (currentPage == Math.ceil(countItems / itemsPerPage))) {
         buttonLast.classList.add('disabled');
         buttonNext.classList.add('disabled');
 
@@ -100,10 +102,10 @@ function buttonStatesDisabled() {
         buttonLast.classList.add('disabled');
         buttonNext.classList.remove('disabled');
 
-    } else if (currentPage == 24) {
+    } else if (currentPage == Math.ceil(items.length / itemsPerPage)) {
         buttonNext.classList.add('disabled');
 
-    } else if (currentPage == Math.ceil(countItems / 5)) {
+    } else if (currentPage == Math.ceil(countItems / itemsPerPage)) {
         buttonLast.classList.remove('disabled');
         buttonNext.classList.add('disabled');
 
@@ -139,7 +141,7 @@ function nextGroupButtons() {
     let countItems = items.slice(startIndex).length;
 
     pageButtons.forEach((button, index) => {
-        if ((index + 1) > Math.ceil(countItems / 5)) {
+        if ((index + 1) > Math.ceil(countItems / itemsPerPage)) {
             button.classList.add('d-none');
         }
         button.innerHTML = Number(button.innerHTML) + 5;
@@ -270,7 +272,7 @@ function showSearchRoutes(items) {
     let countItems = newRoutes.length;
 
     pageButtons.forEach((button, index) => {
-        if ((index + 1) > Math.ceil(countItems / 5)) {
+        if ((index + 1) > Math.ceil(countItems / itemsPerPage)) {
             button.classList.add('d-none');
 
         } else {
