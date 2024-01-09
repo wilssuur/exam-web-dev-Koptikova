@@ -220,6 +220,8 @@ function createGuidesListElement(record) {
     itemElementWorkExperience.classList.add('guide-experience');
 
     let itemElementPricePerHour = document.createElement('td');
+    itemElementPricePerHour.classList.add('guide-price');
+
     let itemElementButton = document.createElement('td');
 
     itemElementId.append(record.id);
@@ -298,7 +300,6 @@ function searchRoutesHandler() {
     let isNotChose = filterText == 'Основной объект';
 
     if (searchText == '' && (isNone || isNotChose)) {
-        console.log('ничего');
         let selector = '.pagination-routes li span';
         let pageButtons = document.querySelectorAll(selector);
         pageButtons = Array.from(pageButtons).splice(1, 5);
@@ -322,7 +323,6 @@ function searchRoutesHandler() {
         buttonStatesActive();
 
     } else if (isNone || isNotChose) {
-        console.log('только поиск');
         items.forEach((item) => {
             let routeName = item.querySelector('.route-name').innerHTML;
             let itemName = routeName.toLowerCase();
@@ -340,7 +340,6 @@ function searchRoutesHandler() {
         showSearchRoutes(items);
 
     } else if (searchText != '' && !(isNone || isNotChose)) {
-        console.log('и поиск, и фильтр');
 
         items.forEach((item) => {
             let routeName = item.querySelector('.route-name').innerHTML;
@@ -376,8 +375,6 @@ function searchRoutesHandler() {
         showSearchRoutes(items);
 
     } else {
-        console.log('только фильтр');
-
         items.forEach((item) => {
             let routeObj;
             let itemRouteObj = item.querySelector('.route-objects');
@@ -453,8 +450,14 @@ function createFilterLanguages(object) {
 
 }
 
-function orderBtnHandler(nameG, nameR) {
-    console.log(nameG, nameR);
+function orderBtnHandler(nameG, nameR, price) {
+    let form = document.getElementById('orderForm');
+    form.reset();
+
+    form.querySelector('#guideName').innerHTML = nameG;
+    form.querySelector('#routeName').innerHTML = nameR;
+    form.querySelector('#price').innerHTML = price;
+
 }
 
 function guideChooseBtnHandler(event) {
@@ -476,6 +479,7 @@ function guideChooseBtnHandler(event) {
         currentGuide = idGuide;
 
         let nameG = elem.closest("tr").querySelector('.guide-name').innerHTML;
+        let price = elem.closest("tr").querySelector('.guide-price').innerHTML;
 
         let nameR;
 
@@ -486,7 +490,7 @@ function guideChooseBtnHandler(event) {
             }
         });
         let orderButton = document.querySelector('#order-button');
-        orderButton.onclick = orderBtnHandler(nameG, nameR);
+        orderButton.onclick = orderBtnHandler(nameG, nameR, price);
     }
 }
 
@@ -535,7 +539,6 @@ async function routeChooseBtnHandler(event) {
     }
 }
 
-
 function filterGuidesHandler() {
     let filterText = document.getElementById("guide-languages").value;
 
@@ -554,13 +557,11 @@ function filterGuidesHandler() {
     let items = Array.from(tableGuidesContent.getElementsByTagName('tr'));
 
     if ((isNone || isNotChose) && isEmptyExp) {
-        console.log('ничего');
         items.forEach((item) => {
             item.classList.remove('d-none');
         });
 
     } else if (isEmptyExp) {
-        console.log('только фильтр');
         items.forEach((item) => {
             let itemGuideLang = item.querySelector('.guide-language');
             itemGuideLang = itemGuideLang.innerHTML;
@@ -573,7 +574,6 @@ function filterGuidesHandler() {
         });
 
     } else {
-        console.log('и опыт, и фильтр(если есть)');
         items.forEach((item) => {
             let itemGuideLang = item.querySelector('.guide-language');
             itemGuideLang = itemGuideLang.innerHTML;
@@ -631,27 +631,38 @@ function filterGuidesHandler() {
 }
 
 async function LoadStorage() {
-    let urlRoutes = `${hostRoutes}?${apiKey}`;
-    let url = new URL(urlRoutes);
+    try {
+        let urlRoutes = `${hostRoutes}?${apiKey}`;
+        let url = new URL(urlRoutes);
+    
+        let response = await fetch(url);
+    
+        let result = await response.json();
+        renderRoutes(result);
+        
+        document.querySelector('#server-error').classList.add('d-none');
+    
+        let items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
+        let startIndex = (currentPage - 1) * itemsPerPage;
+        let endIndex = startIndex + itemsPerPage;
+    
+        items.forEach((item, index) => {
+            item.classList.toggle('d-none', index < startIndex
+                || index >= endIndex);
+        });
+        let buttonLast = document.querySelectorAll('.last')[0];
+        buttonLast.classList.add('disabled');
+        document.querySelector('#routes-list').onclick = routeChooseBtnHandler;
+        result.forEach((object) => {
+            parser(object.mainObject);
+        });
 
-    let response = await fetch(url);
-    let result = await response.json();
-    renderRoutes(result);
+    } catch (error) {
+        document.querySelector('#server-error').classList.remove('d-none');
+        let textError = 'Не удалось получить данные с серверы';
+        document.querySelector('#text-error').innerHTML = textError;
+    }
 
-    let items = Array.from(tableRoutesContent.getElementsByTagName('tr'));
-    let startIndex = (currentPage - 1) * itemsPerPage;
-    let endIndex = startIndex + itemsPerPage;
-
-    items.forEach((item, index) => {
-        item.classList.toggle('d-none', index < startIndex
-            || index >= endIndex);
-    });
-    let buttonLast = document.querySelectorAll('.last')[0];
-    buttonLast.classList.add('disabled');
-    document.querySelector('#routes-list').onclick = routeChooseBtnHandler;
-    result.forEach((object) => {
-        parser(object.mainObject);
-    });
 }
 
 window.onload = function () {

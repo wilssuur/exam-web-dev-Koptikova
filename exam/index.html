@@ -21,7 +21,7 @@
                         d="M16 7a1 1 0 0 1-1 1v3.5c0 .818-.393 1.544-1 2v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5V14H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2a2.496 2.496 0 0 1-1-2V8a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1V2.64C1 1.452 1.845.408 3.064.268A43.608 43.608 0 0 1 8 0c2.1 0 3.792.136 4.936.268C14.155.408 15 1.452 15 2.64V4a1 1 0 0 1 1 1zM3.552 3.22A43.306 43.306 0 0 1 8 3c1.837 0 3.353.107 4.448.22a.5.5 0 0 0 .104-.994A44.304 44.304 0 0 0 8 2c-1.876 0-3.426.109-4.552.226a.5.5 0 1 0 .104.994ZM8 4c-1.876 0-3.426.109-4.552.226A.5.5 0 0 0 3 4.723v3.554a.5.5 0 0 0 .448.497C4.574 8.891 6.124 9 8 9c1.876 0 3.426-.109 4.552-.226A.5.5 0 0 0 13 8.277V4.723a.5.5 0 0 0-.448-.497A44.304 44.304 0 0 0 8 4m-3 7a1 1 0 1 0-2 0 1 1 0 0 0 2 0m8 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m-7 0a1 1 0 0 0 1 1h2a1 1 0 1 0 0-2H7a1 1 0 0 0-1 1" />
                 </svg>
                 <a class="navbar-brand text-dark fs-2 m-0 p-0" href="#">MosGuide</a>
-                <a class="nav-link active ms-auto" aria-current="page" href="pers-acc.html">
+                <a class="nav-link active ms-auto" aria-current="page" href="#">
                     <svg xmlns="http://www.w3.org/2000/svg" width="47" height="47" fill="currentColor"
                         class="bi bi-person-circle text-dark" viewBox="0 0 16 16">
                         <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -183,6 +183,9 @@
 
 
         <section class="section4" id="routes">
+            <div class="d-none text-center mt-3 py-3 bg-danger bg-opacity-50 fs-4" id="server-error">
+                <p id="text-error"></p>
+            </div>
             <div class="container py-5">
                 <div class="text-center">
                     <h2 class="mb-3">Список пешеходных маршрутов</h2>
@@ -312,11 +315,73 @@
                     </div>
                 </div>
                 <div class="text-center d-none" id="order-button">
-                    <button class="button px-3 py-2 border border-1 rounded-1 border-dark">Оформить заявку</button>
+                    <button class="button px-3 py-2 border border-1 rounded-1 border-dark" data-bs-toggle="modal"
+                        data-bs-target="#createOrderModal">Оформить заявку</button>
                 </div>
             </div>
         </section>
     </main>
+
+    <div class="modal fade" tabindex="-1" id="createOrderModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Оформление заявки</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="orderForm">
+                        <div class="d-none" id="OrderId"></div>
+                        <!-- <input type="hidden" name="taskId" id="OrderId"> -->
+                        <div class="mb-3 row">
+                            <div class="col-3">Гид: </div>
+                            <div id="guideName" name="name" class="col-8"></div>
+                        </div>
+
+                        <div class="mb-4 row">
+                            <div class="col-3">Маршрут: </div>
+                            <div id="routeName" name="desc" class="col-9"></div>
+                        </div>
+
+                        <div class="row gap-2 mb-4">
+                            <div class="col-5">
+                                <label for="editTaskStatus" class="form-label">Дата экскурсии</label>
+                                <input type="date">
+                            </div>
+                            <div class="col-5">
+                                <label for="editTaskStatus" class="form-label">Время начала</label>
+                                <input type="time" name="time" id="time" class="form-control" min="09:00" max="23:00"
+                                    step="1800" required="09:00">
+                            </div>
+                            <div class="col-5">
+                                <label for="editTaskStatus" class="form-label">Длительность</label>
+                                <select class="form-select" id="durationSelect">
+                                    <option value="1">1 час</option>
+                                    <option value="2">2 часа</option>
+                                    <option value="3">3 часа</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <label for="editTaskStatus" class="form-label">Количество человек</label>
+                                <input type="number" class="form-control" id="numberOfPeople" min="1" max="20">
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3 row">
+                            <div class="col-5">Итоговая стоимость: </div>
+                            <div class="col-4"><span id="price"></span> руб.</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        id="createTask">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <template id="alert-template">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
